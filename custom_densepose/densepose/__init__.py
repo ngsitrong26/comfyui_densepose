@@ -6,7 +6,8 @@ import torch.nn as nn
 from einops import rearrange
 from PIL import Image
 
-from custom_densepose.util import HWC3, resize_image_with_pad, common_input_validate, custom_hf_download, DENSEPOSE_MODEL_NAME
+# from .custom_densepose.util import HWC3, resize_image_with_pad, common_input_validate, custom_hf_download, DENSEPOSE_MODEL_NAME
+from ..util import HWC3, resize_image_with_pad, common_input_validate, custom_hf_download, DENSEPOSE_MODEL_NAME
 from .densepose import DensePoseMaskedColormapResultsVisualizer, _extract_i_from_iuvarr, densepose_chart_predictor_output_to_result_with_confidences
 
 N_PART_LABELS = 24
@@ -41,28 +42,20 @@ class DenseposeDetector:
 
     def preprocess_parts(self, extractor, pred_boxes, corase_segm, fine_segm, u,v, **kwargs):
         densepose_results = []
+        index_mapping = {
+            'head': HEAD_INDEXS,
+            'background': BG_INDEXS,
+            'torso': TORSO_INDEXS,
+            'hand': HAND_INDEXS,
+            'leg': LEG_INDEXS,
+            'arm': ARM_INDEXS,
+        }
         for i in range(len(pred_boxes)):
-            densepose_result=extractor(pred_boxes[i:i+1], corase_segm[i:i+1], fine_segm[i:i+1], u[i:i+1], v[i:i+1])
-            
-            if kwargs.get('head', False):
-                head = np.isin(densepose_result[1], HEAD_INDEXS)
-                densepose_result[1][head] = 0
-            if kwargs.get('background', False):
-                background = np.isin(densepose_result[1], BG_INDEXS)
-                densepose_result[1][background] = 0
-            if kwargs.get('torso', False):
-                torso = np.isin(densepose_result[1], TORSO_INDEXS)
-                densepose_result[1][torso] = 0
-            if kwargs.get('hand', False):
-                hand = np.isin(densepose_result[1], HAND_INDEXS)
-                densepose_result[1][hand] = 0
-            if kwargs.get('leg', False):
-                leg = np.isin(densepose_result[1], LEG_INDEXS)
-                densepose_result[1][leg] = 0
-            if kwargs.get('arm', False):
-                arm = np.isin(densepose_result[1], ARM_INDEXS)
-                densepose_result[1][arm] = 0
-                
+            densepose_result = extractor(pred_boxes[i:i+1], corase_segm[i:i+1], fine_segm[i:i+1], u[i:i+1], v[i:i+1])
+            for key, indices in index_mapping.items():
+                if not kwargs.get(key, True):
+                    mask = torch.isin(densepose_result[1], torch.tensor(indices, device=densepose_result[1].device))
+                    densepose_result[1][mask] = 0
             densepose_results.append(densepose_result)
         return densepose_results
     
