@@ -13,7 +13,8 @@ from .densepose import DensePoseMaskedColormapResultsVisualizer, _extract_i_from
 N_PART_LABELS = 24
 BG_INDEXS=[0]
 TORSO_INDEXS=[1,2]
-HAND_INDEXS=[3,4,5,6]
+HAND_INDEXS=[3,4]
+FOOT_INDEXS=[5,6]
 LEG_INDEXS=[7,8,9,10,11,12,13,14]
 ARM_INDEXS=[15,16,17,18,19,20,21,22]
 HEAD_INDEXS=[23, 24]
@@ -47,6 +48,7 @@ class DenseposeDetector:
             'background': BG_INDEXS,
             'torso': TORSO_INDEXS,
             'hand': HAND_INDEXS,
+            'foot':FOOT_INDEXS,
             'leg': LEG_INDEXS,
             'arm': ARM_INDEXS,
         }
