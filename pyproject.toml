@@ -5,7 +5,7 @@ description = "Plug-and-play ComfyUI node sets for making ControlNet hint images
 
 version = "1.0.0"
 # dependencies = ["torch", "importlib_metadata", "huggingface_hub", "scipy", "opencv-python>=4.7.0.72", "filelock", "numpy", "Pillow", "einops", "torchvision", "pyyaml", "scikit-image", "python-dateutil", "mediapipe", "svglib", "fvcore", "yapf", "omegaconf", "ftfy", "addict", "yacs", "trimesh[easy]", "albumentations", "scikit-learn", "matplotlib"]
-dependencies = []
+dependencies = ["opencv-python>=4.7.0.72"]
 
 [project.urls]
 Repository = "https://github.com/ngsitrong26/comfyui_densepose"
